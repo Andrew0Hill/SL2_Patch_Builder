@@ -1,5 +1,5 @@
-# SL2_Patch_Builder
-A work-in-progress patch builder/customizer for the Boss SL-2 Slicer effect pedal.
+# SL2 Patch Builder
+This repository contains a work-in-progress patch builder/customizer for the Boss SL-2 Slicer effect pedal.
 
 ## What works
 - Skeleton functionality for reading a `.tsl` live set file, converting to Python objects, and writing back to `.tsl`.
