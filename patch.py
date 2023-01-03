@@ -1,4 +1,6 @@
 from utils import hex_array_to_integer, integer_array_to_hex, hex_param_name_to_str, str_param_name_to_hex
+from enum import IntEnum
+import numpy as np
 import warnings
 import json
 
@@ -19,7 +21,6 @@ PARAM_SET_KEYS = {"PATCH%COM",
                   "PATCH%NS",
                   "PATCH%PEQ",
                   "PATCH%BEAT"}
-
 
 class LiveSet(object):
     def __init__(self, name, data, format_rev="0001", device="SL-2"):
@@ -102,6 +103,18 @@ class SlicerPatch(object):
         memo = obj.get("memo")
 
         return cls(param_set=param_set, memo=memo)
+
+    @property
+    def step_length_c1(self):
+        return np.array(self.paramSet["PATCH%SLICER(1)"][4:28])
+
+    @property
+    def step_level_c1(self):
+        return np.array(self.paramSet["PATCH%SLICER(1)"][28:52])
+
+    @property
+    def step_number_c1(self):
+        return self._slice_map[self.paramSet["PATCH%SLICER(1)"][3]]
 
     def json(self):
         json_dict = self.__dict__.copy()
