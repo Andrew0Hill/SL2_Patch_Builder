@@ -1,7 +1,27 @@
 import numpy as np
-from .utils import ParamArray
+from enum import IntEnum
+from ..utils import ParamArray
+
+class PATTERN(IntEnum):
+    USER = 50
+
+class FX_TYPE(IntEnum):
+    OFF = 0
+    PITCH = 1
+    FLANGER = 2
+    PHASER = 3
+    SWEEP = 4
+    FILTER = 5
+    RING = 6
+
+class STEP_NUMBER(IntEnum):
+    STEP_8 = 0
+    STEP_12 = 1
+    STEP_16 = 2
+    STEP_24 = 3
 
 class SlicerParamArray(ParamArray):
+
     _pattern = 0
     _enable = 1
     _fx_type = 2

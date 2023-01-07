@@ -2,7 +2,7 @@ import json
 import numpy as np
 from typing import List
 from dataclasses import dataclass
-from .params import SlicerParamArray
+from .params.slicer import SlicerParamArray
 from .consts import *
 
 
@@ -67,8 +67,8 @@ class LiveSet(object):
         return self._data
 
     @staticmethod
-    def from_tsl(filename: str):
-        return Loader.load(filename)
+    def from_tsl(file):
+        return Loader.load(file)
 
 class Loader(object):
     _KEY_TO_CLASS = {PARAM_SET_KEYS: ParamSet,
@@ -88,7 +88,13 @@ class Loader(object):
         raise RuntimeError(f"Unable to find a matching class for parsed dictionary '{obj}'")
 
     @staticmethod
-    def load(filename:str):
-        with open(filename, "r") as f:
-            obj = json.load(f, object_hook=Loader._object_hook_dispatch)
+    def load(file_or_name):
+        if type(file_or_name) is str:
+            file_obj = open(file_or_name,"r")
+        else:
+            file_obj = file_or_name
+
+        obj = json.load(file_obj, object_hook=Loader._object_hook_dispatch)
+
+        file_obj.close()
         return obj
