@@ -21,6 +21,8 @@ N_SLIDER_TYPES = len(SLIDER_TYPES)
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.CERULEAN, dbc.icons.BOOTSTRAP])
 app.title = "SL2 Patch Editor"
 
+app_server = app.server
+
 header = dbc.NavbarSimple(children=[
                             dbc.NavItem(dbc.NavLink([
                                 dbc.Row([

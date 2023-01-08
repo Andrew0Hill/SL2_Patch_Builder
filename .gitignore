@@ -1,0 +1,6 @@
+__pycache__/
+.idea/
+.ipynb_checkpoints/
+venv/
+sl2/**/__pycache__
+sl2/__pycache__

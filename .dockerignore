@@ -1,0 +1,13 @@
+# Ignore directories
+.ipynb_checkpoints/
+venv/
+
+# Ignore file types
+*.tsl
+*.alb
+*.ipynb
+*.wav
+
+# Ignore files
+README.md
+
