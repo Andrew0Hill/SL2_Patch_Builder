@@ -1,6 +1,10 @@
 import numpy as np
 from enum import IntEnum
 from ..utils import ParamArray
+from .. import defaults
+from typing import Optional,List,Union
+from functools import cached_property
+import importlib.resources as pkg_resources
 
 class PATTERN(IntEnum):
     USER = 50
@@ -20,6 +24,7 @@ class STEP_NUMBER(IntEnum):
     STEP_16 = 2
     STEP_24 = 3
 
+
 class SlicerParamArray(ParamArray):
 
     _pattern = 0
@@ -31,6 +36,25 @@ class SlicerParamArray(ParamArray):
     _band = slice(52, 76)
     _effect = slice(76, 100)
     _pitch = slice(100, 123)
+
+    def to_db_list(self) -> list:
+        """Special function for coverting the object to a list that can be read by the dashboard
+
+        Note: This function just keeps the dashboard callbacks looking cleaner, and won't be useful for you if you are
+        using the sl2 library directly
+
+        :return: A list formatted for the dashboard output.
+        """
+        rv: list = self.tolist()
+
+        # Pattern is converted to string
+        rv[self._pattern] = str(rv[self._pattern])
+        # fx_type is converted to string
+        rv[self._fx_type] = str(rv[self._fx_type])
+        # step_number is converted to string
+        rv[self._step_number] = str(rv[self._step_number])
+
+        return rv
 
     @property
     def pattern(self):

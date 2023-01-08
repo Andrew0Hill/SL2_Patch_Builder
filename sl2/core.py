@@ -1,42 +1,81 @@
 import json
 import numpy as np
+from importlib.resources import is_resource,read_text
 from typing import List
 from dataclasses import dataclass
+from typing import Optional
 from .params.slicer import SlicerParamArray
+from .params.com import ComParamArray
+from .utils import ParamArray
 from .consts import *
-
+from . import defaults
+import copy
 
 class ParamSet(object):
 
-    def __init__(self, **kwargs):
-        self._storage = {key: np.array(val) for key, val in kwargs.items()}
+    _DEFAULTS = "param_set.json"
 
-        self._slicer_1 = SlicerParamArray(self._storage["PATCH%SLICER(1)"])
-        self._slicer_2 = SlicerParamArray(self._storage["PATCH%SLICER(2)"])
+    def __init__(self, **kwargs):
+        # Load the defaults, so that we provide default values for anything that isn't passed in.
+        self._storage = ParamSet._load_defaults()
+        # Make everything a generic ParamArray for now, we will create more specific views using subclasses
+        # of ParamArray below.
+        np_kwargs = {k:ParamArray(v) for k,v in kwargs.items()}
+        self._storage.update(np_kwargs)
+        # Get views of specific values we are interested in.
+        self._com = self._storage["PATCH%COM"].view(ComParamArray)
+        self._slicer_1 = self._storage["PATCH%SLICER(1)"].view(SlicerParamArray)
+        self._slicer_2 = self._storage["PATCH%SLICER(2)"].view(SlicerParamArray)
+
+    @staticmethod
+    def _load_defaults():
+        if not is_resource(defaults,ParamSet._DEFAULTS):
+            raise RuntimeError(f"Can't find default file {ParamSet._DEFAULTS} in resources!")
+
+        rfile = read_text(defaults, "param_set.json")
+        json_defaults = json.loads(rfile)
+
+        return {k:ParamArray(v) for k,v in json_defaults.items()}
+
+    @property
+    def com(self):
+        return self._com
 
     @property
     def slicer_1(self):
         return self._slicer_1
 
+    @slicer_1.setter
+    def slicer_1(self,v):
+        self._slicer_1[:] = v
+
     @property
     def slicer_2(self):
         return self._slicer_2
 
-    def json(self) -> dict:
-        pass
+    @slicer_2.setter
+    def slicer_2(self,v):
+        self._slicer_2[:] = v
 
+    def dict(self) -> dict:
+        return {k:v.json() for k,v in self._storage.items()}
 
-@dataclass
 class Memo:
-    memo: str
-    isToneCentralPatch: bool
+    def __init__(self, memo: str = "", isToneCentralPatch: bool = True):
+        self.memo = memo
+        self.isToneCentralPatch = isToneCentralPatch
 
+    def dict(self):
+        return self.__dict__
 
-@dataclass
-class Patch(object):
-    memo: Memo
-    paramSet: ParamSet
+class Patch:
+    def __init__(self, paramSet: ParamSet, memo: Optional[Memo] = None):
+        self.memo: Memo = memo if memo is not None else Memo()
+        self.paramSet: ParamSet = paramSet
 
+    def dict(self):
+        return {"memo":self.memo.dict(),
+                "paramSet":self.paramSet.dict()}
 
 class LiveSet(object):
 
@@ -66,35 +105,39 @@ class LiveSet(object):
     def data(self):
         return self._data
 
-    @staticmethod
-    def from_tsl(file):
-        return Loader.load(file)
+    def to_json(self):
+        return json.dumps(self, default=lambda x: x.dict())
 
-class Loader(object):
-    _KEY_TO_CLASS = {PARAM_SET_KEYS: ParamSet,
-                     PATCH_KEYS: Patch,
-                     MEMO_KEYS: Memo,
-                     LIVE_SET_KEYS: LiveSet}
+    def dict(self):
+        json_rep = {"name":self.name,
+                    "formatRev":self.formatRev,
+                    "device":self.device,
+                    "data":[[data.dict() for data in self.data[0]]]}
+        return json_rep
 
-    @staticmethod
-    def _object_hook_dispatch(obj):
-        """Accepts a dictionary and calls the correct class based on keys."""
-        parsed_keys = frozenset(obj.keys())
 
-        cls = Loader._KEY_TO_CLASS.get(parsed_keys)
-        if cls is not None:
-            return cls(**obj)
+_KEY_TO_CLASS = {PARAM_SET_KEYS: ParamSet,
+                 PATCH_KEYS: Patch,
+                 MEMO_KEYS: Memo,
+                 LIVE_SET_KEYS: LiveSet}
 
-        raise RuntimeError(f"Unable to find a matching class for parsed dictionary '{obj}'")
+def _object_hook_dispatch(obj):
+    """Accepts a dictionary and calls the correct class based on keys."""
+    parsed_keys = frozenset(obj.keys())
 
-    @staticmethod
-    def load(file_or_name):
-        if type(file_or_name) is str:
-            file_obj = open(file_or_name,"r")
-        else:
-            file_obj = file_or_name
+    cls = _KEY_TO_CLASS.get(parsed_keys)
+    if cls is not None:
+        return cls(**obj)
 
-        obj = json.load(file_obj, object_hook=Loader._object_hook_dispatch)
+    raise RuntimeError(f"Unable to find a matching class for parsed dictionary '{obj}'")
 
-        file_obj.close()
-        return obj
+def read_tsl(file_or_name):
+    if type(file_or_name) is str:
+        file_obj = open(file_or_name,"r")
+    else:
+        file_obj = file_or_name
+
+    obj = json.load(file_obj, object_hook=_object_hook_dispatch)
+
+    file_obj.close()
+    return obj

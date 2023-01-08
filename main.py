@@ -1,7 +1,8 @@
-from sl2 import LiveSet
+import sl2
+
 
 if __name__ == "__main__":
 
-    live_set = LiveSet.from_tsl("default_patch.tsl")
+    live_set = sl2.read_tsl("patch_defaults.tsl")
 
     print("Here!")

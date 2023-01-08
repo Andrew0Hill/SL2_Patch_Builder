@@ -33,8 +33,7 @@ def create_channel_card(cnum: int,slider_types: List):
             dbc.CardHeader([
                 dbc.Row(
                     [
-                        dbc.Col(html.H4(f"Channel {cnum}", className="card-title"), width="auto"),
-                        dbc.Col(dbc.Switch(value=True, id=p_names["Enable"]), width="auto")
+                        dbc.Col(f"Channel {cnum} Parameters", width="auto")
                     ],
                     align="center"
                 ),
@@ -43,12 +42,15 @@ def create_channel_card(cnum: int,slider_types: List):
                 dbc.Row(
                     [
                         dbc.Col([
+                            dbc.Label("Enabled"),
+                            dbc.Switch(value=True, id=p_names["Enable"],label=None)
+                        ],width="auto"),
+                        dbc.Col([
                             dbc.Label(["Pattern Select:"]),
                             dbc.Select(id=p_names["Pattern"],
                                        options=opts_from_enum(slicer.PATTERN),
                                        value=str(slicer.PATTERN.USER.value),
-                                       disabled=True,
-                                       persistence=True)
+                                       disabled=True)
 
                         ], width="auto"),
                         dbc.Col([
@@ -56,16 +58,14 @@ def create_channel_card(cnum: int,slider_types: List):
                             dbc.Select(id=p_names["Effect"],
                                        options=opts_from_enum(slicer.FX_TYPE),
                                        value=str(slicer.FX_TYPE.OFF.value),
-                                       disabled=True,
-                                       persistence=True)
+                                       disabled=True)
                         ], width="auto"),
                         dbc.Col([
                             dbc.Label("Step Number:"),
                             dbc.Select(id=p_names["Step Num"],
                                        options=opts_from_enum(slicer.STEP_NUMBER),
                                        value=str(slicer.STEP_NUMBER.STEP_8.value),
-                                       disabled=False,
-                                       persistence=True)
+                                       disabled=False)
                         ], width="auto")
                     ],style={"padding-bottom":"15px"}),
                 dbc.Row(
