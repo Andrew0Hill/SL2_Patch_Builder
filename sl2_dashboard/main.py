@@ -1,28 +1,47 @@
-import dash
-import dash_bootstrap_components as dbc
+# Base python
 import base64
 import io
-import sl2
 import json
-from sl2.params import slicer
+import re
+# Third-party
+import dash
+import dash_bootstrap_components as dbc
 import numpy as np
 from dash import html, dcc, Output, Input, State
+# Local imports
+import sl2
+from sl2.params import slicer
+from modals import all_modals, all_toasts
 from slicer import create_channel_card, N_CHANNELS
 
-COLOR_MAIN = "#009999"
+# Define the types and parameters of the sliders for the parameter arrays.
 SLIDER_TYPES = [("step_length", {"min": 0, "max": 100, "value": 50}),
                 ("step_level", {"min": 0, "max": 100, "value": 100}),
                 ("band_pass", {"min": 0, "max": 6, "value": 0}),
                 ("effect_level", {"min": 0, "max": 100, "value": 50}),
                 ("pitch_shift", {"min": 0, "max": 24, "value": 12})]
-
+# Get the number of slider groups
 N_SLIDER_TYPES = len(SLIDER_TYPES)
 
+# Helper function to make a hover-able tooltip
+glbl_tooltips = []
+def make_tooltip(id):
+    tt = html.A(id=id,
+                className="bi bi-question-circle",
+                style={"margin-left": "5px",
+                       "color":"info"})
+    glbl_tooltips.append(id)
+    return tt
+# Main Plotly Dash application
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.CERULEAN, dbc.icons.BOOTSTRAP])
 app.title = "SL2 Patch Editor"
-
+# The server for the application, used for running from gunicorn.
 app_server = app.server
 
+##############
+# App Layout #
+##############
+# Header/Navigation bar for the app.
 header = dbc.NavbarSimple(children=[
                             dbc.NavItem(dbc.NavLink([
                                 dbc.Row([
@@ -40,7 +59,8 @@ header = dbc.NavbarSimple(children=[
                           dark=True,
                           fluid=True)
 
-settings = dbc.Card([
+# Card with upload/download .tsl file buttons.
+file_transfer_card = dbc.Card([
     dbc.CardHeader("File Transfer", className="card-title"),
     dbc.CardBody([
         dbc.Row([
@@ -61,10 +81,11 @@ settings = dbc.Card([
     ])
 ])
 
-# Create both channel cards
-c1_params, c1_slider_ids, c1_card = create_channel_card(1, slider_types=SLIDER_TYPES)
-c2_params, c2_slider_ids, c2_card = create_channel_card(2, slider_types=SLIDER_TYPES)
-
+# Create the layouts for both channel cards using a function from slicer.py
+c1_params, c1_tts, c1_slider_ids, c1_card = create_channel_card(1, slider_types=SLIDER_TYPES)
+c2_params, c2_tts, c2_slider_ids, c2_card = create_channel_card(2, slider_types=SLIDER_TYPES)
+channel_tooltips = list(zip(c1_tts,c2_tts))
+# Layout for the C1 and C2 channel cards.
 channel_cards = html.Div([
     html.Div(
         [
@@ -73,19 +94,19 @@ channel_cards = html.Div([
                 dbc.CardBody([
                     dbc.Row([
                         dbc.Col([
-                            dbc.Label("Live Set Name:"),
+                            dbc.Label(["Live Set Name:", make_tooltip("ls_name_tt")]),
                             dbc.Input(id="ls_name", value="My Live Set", type="text", valid=True)
                         ], width="auto"),
                         dbc.Col([
-                            dbc.Label("Patch Name:"),
+                            dbc.Label(["Patch Name:", make_tooltip("patch_name_tt")]),
                             dbc.Input(id="patch_name", value="CUSTOM-P1", type="text", valid=True)
                         ], width="auto"),
                         dbc.Col([
-                            dbc.Label("Format Rev:"),
+                            dbc.Label(["Format Rev:", make_tooltip("format_rev_tt")]),
                             dbc.Input(id="ls_formatrev", value="0001", type="text", disabled=True)
                         ], width="auto"),
                         dbc.Col([
-                            dbc.Label("Device:"),
+                            dbc.Label(["Device:", make_tooltip("device_tt")]),
                             dbc.Input(id="ls_device", value="SL-2", type="text", disabled=True)
                         ], width="auto")
                     ])
@@ -97,69 +118,38 @@ channel_cards = html.Div([
     html.Div(c2_card, style={"padding-bottom": "10px"})
 ])
 
+# Layout for the body of the page.
+body = dbc.Container(children=
+                     all_modals +
+                     all_toasts +
+                     [dbc.Row([
+        dbc.Col([file_transfer_card], width=2),
+        dbc.Col([channel_cards], width=10)
+    ])],
+    style={"padding-top": "10px"},
+    fluid=True)
 
+# Final app layout
+app.layout = html.Div([header, body])
+
+#################
+# App Callbacks #
+#################
+
+# Function to validate the names for the Liveset and Patch.
 def validate_name(name):
     context = dash.callback_context
     if context.triggered_id is None:
         return dash.no_update
     valid = name.isascii()
     return valid, not valid
-
-
+# Callbacks to set up the validation for Liveset and Patch.
 app.callback([Output("ls_name", "valid"), Output("ls_name", "invalid")],
              Input("ls_name", "value"))(validate_name)
 app.callback([Output("patch_name", "valid"), Output("patch_name", "invalid")],
              Input("patch_name", "value"))(validate_name)
 
-err_toast = dbc.Toast("Unable to parse .tsl file!",
-                      id="err_toast",
-                      header="File Error",
-                      is_open=False,
-                      dismissable=True,
-                      duration=3000,
-                      icon="danger",
-                      style={"position": "fixed", "top": 66, "right": 10, "width": 350, "zIndex": 999})
-
-success_toast = dbc.Toast("Loaded .tsl file sucessfully!",
-                          id="success_toast",
-                          header="File Upload Successful",
-                          is_open=False,
-                          dismissable=True,
-                          duration=1500,
-                          icon="success",
-                          style={"position": "fixed", "top": 66, "right": 10, "width": 350, "zIndex": 999})
-
-disclaimer_modal = dbc.Modal([
-    dbc.ModalHeader(dbc.ModalTitle("About This Tool")),
-    dbc.ModalBody([
-        html.P("This tool can be used to edit the .tsl files exported from Tone Studio for the SL-2 Slicer."),
-        html.P("The tool is currently under development, so not all parameters defined in .tsl files are"
-               " available yet, but I will try to add support for as many as possible in the future.\n"),
-        html.P("If you find any issues or bugs with the tool (or just have a suggestion), please open an "
-               "issue on GitHub using the link in the header.\n"),
-        html.P("Thanks for trying out the tool, and happy slicing!\n"),
-        html.P("-Andrew")
-    ]),
-    dbc.ModalFooter(
-            html.P("This tool is licensed under the MIT license, and provided as-is without any warranty. This tool"
-                   " and its creators are not affiliated or endorsed in any way by BOSS or Roland Corporation.",
-                   style={"font-size":"x-small","align":"left"})
-    )
-], is_open=True)
-
-body = dbc.Container(children=[
-    success_toast,
-    err_toast,
-    disclaimer_modal,
-    dbc.Row([
-        dbc.Col([settings], width=2),
-        dbc.Col([channel_cards], width=10)
-    ])
-], style={"padding-top": "10px"}, fluid=True)
-
-app.layout = html.Div([header, body])
-
-
+# Function to handle the upload of a .tsl file.
 def handle_upload(contents):
     context = dash.callback_context
     if context.triggered_id is None:
@@ -185,8 +175,7 @@ def handle_upload(contents):
     except:
         show_err = True
     return glbl, p1, p2, show_err, show_success
-
-
+# Callback for uploading a .tsl file.
 glbl_outputs = [Output(lsp, "value") for lsp in ["ls_name", "patch_name", "ls_formatrev", "ls_device"]]
 c1_outputs = [Output(sl, "value") for sl in c1_params + c1_slider_ids]
 c2_outputs = [Output(sl, "value") for sl in c2_params + c2_slider_ids]
@@ -197,7 +186,7 @@ app.callback([glbl_outputs,
               Output("success_toast", "is_open")],
              [Input("upload", "contents")])(handle_upload)
 
-
+# Function to handle the download of a .tsl file
 def handle_download(_, glbl_p, c1_p, c2_p):
     context = dash.callback_context
     if context.triggered_id is None:
@@ -216,17 +205,16 @@ def handle_download(_, glbl_p, c1_p, c2_p):
     out_json = json.dumps(live_set.dict(), separators=(',', ':'))
     # Return the JSON output.
     return dict(content=out_json, filename="custom_patch.tsl")
-
-
-glbl_stte = [State(lsp, "value") for lsp in ["patch_name", "ls_name", "ls_formatrev", "ls_device"]]
+# Callback for downloading a .tsl file.
+glbl_state = [State(lsp, "value") for lsp in ["patch_name", "ls_name", "ls_formatrev", "ls_device"]]
 c1_state = [State(sl, "value") for sl in c1_params + c1_slider_ids]
 c2_state = [State(sl, "value") for sl in c2_params + c2_slider_ids]
-
 app.callback(Output("download", "data"),
              [Input("download_button", "n_clicks")],
-             [glbl_stte, c1_state, c2_state])(handle_download)
+             [glbl_state, c1_state, c2_state])(handle_download)
 
-
+# Function to set which sliders are disabled based on
+# the channel enable flag, the step number, and the pattern flag
 def disable_channels(enable, step_num, pattern):
     # Step number flag
     step_num = int(step_num)
@@ -239,9 +227,7 @@ def disable_channels(enable, step_num, pattern):
     # Pattern flag works just like enable
     # pattern = int(pattern)
     return np.tile(step_num_flag | (not enable), N_SLIDER_TYPES).tolist()
-
-
-# Set up callbacks
+# Callback to disable the appropriate sliders depending on user's settings.
 app.callback([Output(c1_t, "disabled") for c1_t in c1_slider_ids],
              [Input("c1_enable", "value"),
               Input("c1_step_num", "value"),
@@ -252,5 +238,22 @@ app.callback([Output(c2_t, "disabled") for c2_t in c2_slider_ids],
               Input("c2_step_num", "value"),
               Input("c2_pattern", "value")])(disable_channels)
 
+#################
+# Help Tooltips #
+#################
+def modal_open(*args):
+    if dash.callback_context.triggered_id is None:
+        return dash.no_update
+    return True
+# We have duplicate tooltip icons for each channel, but we will open the same modal for both so we strip out the
+# channel identifier in the id (if it exists).
+cmatch = re.compile("_c\d+_")
+[app.callback(Output(f"{name}_modal","is_open"),[Input(name,"n_clicks")])(modal_open) for name in glbl_tooltips]
+[app.callback(Output(f"{cmatch.sub('_',grp[0])}_modal","is_open"),
+              [Input(name,"n_clicks") for name in grp])(modal_open) for grp in channel_tooltips]
+
+##############################
+# Local Server (Development) #
+##############################
 if __name__ == "__main__":
     app.run_server()
