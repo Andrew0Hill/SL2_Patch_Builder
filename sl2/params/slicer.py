@@ -12,9 +12,9 @@ class PATTERN(IntEnum):
 class FX_TYPE(IntEnum):
     OFF = 0
     PITCH = 1
-    FLANGER = 2
-    PHASER = 3
-    SWEEP = 4
+    FLANGER = 2 # ?
+    PHASER = 3 # SWEEP ?
+    SWEEP = 4 # PHASER ?
     FILTER = 5
     RING = 6
 
@@ -23,7 +23,6 @@ class STEP_NUMBER(IntEnum):
     STEP_12 = 1
     STEP_16 = 2
     STEP_24 = 3
-
 
 class SlicerParamArray(ParamArray):
 

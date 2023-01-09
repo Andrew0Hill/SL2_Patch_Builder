@@ -49,7 +49,7 @@ def create_channel_card(cnum: int,slider_types: List):
             dbc.CardHeader([
                 dbc.Row(
                     [
-                        dbc.Col(f"Channel {cnum} Parameters", width="auto")
+                        dbc.Col(f"Slicer Channel {cnum} Parameters", width="auto")
                     ],
                     align="center"
                 ),
@@ -74,7 +74,7 @@ def create_channel_card(cnum: int,slider_types: List):
                             dbc.Select(id=p_names["Effect"],
                                        options=opts_from_enum(slicer.FX_TYPE),
                                        value=str(slicer.FX_TYPE.OFF.value),
-                                       disabled=True)
+                                       disabled=False)
                         ], width="auto"),
                         dbc.Col([
                             dbc.Label(["Step Number:",make_tooltip(tt_names["Step Num"])]),

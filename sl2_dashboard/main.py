@@ -215,7 +215,7 @@ app.callback(Output("download", "data"),
 
 # Function to set which sliders are disabled based on
 # the channel enable flag, the step number, and the pattern flag
-def disable_channels(enable, step_num, pattern):
+def disable_channels(enable, step_num, pattern, effect):
     # Step number flag
     step_num = int(step_num)
     step_num_flag = np.full(N_CHANNELS, False)
@@ -226,17 +226,26 @@ def disable_channels(enable, step_num, pattern):
             break
     # Pattern flag works just like enable
     # pattern = int(pattern)
-    return np.tile(step_num_flag | (not enable), N_SLIDER_TYPES).tolist()
+    # Check if effect is set to anything other than pitch.
+    effect = int(effect)
+    # If so, we need to disable all pitch_shift sliders.
+    if effect != slicer.FX_TYPE.PITCH:
+        pitch_flag = np.array([elem["id"].startswith("pitch_shift") for elem in dash.callback_context.outputs_list])
+    else:
+        pitch_flag = False
+    return (np.tile(step_num_flag, N_SLIDER_TYPES) | (not enable) | pitch_flag).tolist()
 # Callback to disable the appropriate sliders depending on user's settings.
 app.callback([Output(c1_t, "disabled") for c1_t in c1_slider_ids],
              [Input("c1_enable", "value"),
               Input("c1_step_num", "value"),
-              Input("c1_pattern", "value")])(disable_channels)
+              Input("c1_pattern", "value"),
+              Input("c1_effect", "value")])(disable_channels)
 
 app.callback([Output(c2_t, "disabled") for c2_t in c2_slider_ids],
              [Input("c2_enable", "value"),
               Input("c2_step_num", "value"),
-              Input("c2_pattern", "value")])(disable_channels)
+              Input("c2_pattern", "value"),
+              Input("c2_effect", "value")])(disable_channels)
 
 #################
 # Help Tooltips #
