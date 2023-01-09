@@ -12,16 +12,16 @@ from dash import html, dcc, Output, Input, State
 import sl2
 from sl2.params import slicer
 from modals import all_modals, all_toasts
-from slicer import create_channel_card, N_CHANNELS
-
-# Define the types and parameters of the sliders for the parameter arrays.
-SLIDER_TYPES = [("step_length", {"min": 0, "max": 100, "value": 50}),
-                ("step_level", {"min": 0, "max": 100, "value": 100}),
-                ("band_pass", {"min": 0, "max": 6, "value": 0}),
-                ("effect_level", {"min": 0, "max": 100, "value": 50}),
-                ("pitch_shift", {"min": 0, "max": 24, "value": 12})]
-# Get the number of slider groups
-N_SLIDER_TYPES = len(SLIDER_TYPES)
+from cards.slicer import create_slicer_channel_card, N_CHANNELS, N_SLIDER_GROUPS
+from cards.phaser import create_phaser_channel_card
+from cards.flanger import create_flanger_channel_card
+from cards.tremolo import create_tremolo_channel_card
+from cards.overtone import create_overtone_channel_card
+from cards.file_transfer import file_transfer_card
+from cards.comp import compressor_card
+from cards.mixer import mixer_card
+from cards.noise_supressor import ns_card
+from cards.para_eq import para_eq_card
 
 # Helper function to make a hover-able tooltip
 glbl_tooltips = []
@@ -59,64 +59,60 @@ header = dbc.NavbarSimple(children=[
                           dark=True,
                           fluid=True)
 
-# Card with upload/download .tsl file buttons.
-file_transfer_card = dbc.Card([
-    dbc.CardHeader("File Transfer", className="card-title"),
-    dbc.CardBody([
-        dbc.Row([
-            dbc.Col([dcc.Upload(dbc.Button(html.Span([html.I(className="bi bi-upload", style={"margin-right": "5px"}),
-                                                      "Upload .tls"]),
-                                           className="d-grid gap-2",
-                                           style={"width": "100%"}),
-                                id="upload",
-                                style={"width": "100%",
-                                       "padding-bottom": "15px"}),
-                     dbc.Button(html.Span([html.I(className="bi bi-download", style={"margin-right": "5px"}),
-                                           "Download .tls"]),
-                                className="d-grid gap-2",
-                                id="download_button",
-                                style={"width": "100%"})]),
-            dcc.Download(id="download")
-        ], align="center")
-    ])
-])
-
 # Create the layouts for both channel cards using a function from slicer.py
-c1_params, c1_tts, c1_slider_ids, c1_card = create_channel_card(1, slider_types=SLIDER_TYPES)
-c2_params, c2_tts, c2_slider_ids, c2_card = create_channel_card(2, slider_types=SLIDER_TYPES)
-channel_tooltips = list(zip(c1_tts,c2_tts))
-# Layout for the C1 and C2 channel cards.
-channel_cards = html.Div([
-    html.Div(
-        [
-            dbc.Card([
-                dbc.CardHeader("Global Parameters"),
-                dbc.CardBody([
-                    dbc.Row([
-                        dbc.Col([
-                            dbc.Label(["Live Set Name:", make_tooltip("ls_name_tt")]),
-                            dbc.Input(id="ls_name", value="My Live Set", type="text", valid=True)
-                        ], width="auto"),
-                        dbc.Col([
-                            dbc.Label(["Patch Name:", make_tooltip("patch_name_tt")]),
-                            dbc.Input(id="patch_name", value="CUSTOM-P1", type="text", valid=True)
-                        ], width="auto"),
-                        dbc.Col([
-                            dbc.Label(["Format Rev:", make_tooltip("format_rev_tt")]),
-                            dbc.Input(id="ls_formatrev", value="0001", type="text", disabled=True)
-                        ], width="auto"),
-                        dbc.Col([
-                            dbc.Label(["Device:", make_tooltip("device_tt")]),
-                            dbc.Input(id="ls_device", value="SL-2", type="text", disabled=True)
-                        ], width="auto")
-                    ])
-                ])
-            ])
-        ], style={"padding-bottom": "10px"}
-    ),
-    html.Div(c1_card, style={"padding-bottom": "10px"}),
-    html.Div(c2_card, style={"padding-bottom": "10px"})
-])
+slicer_c1_params, slicer_c1_tts, slicer_c1_slider_ids, slicer_c1_card = create_slicer_channel_card(1)
+slicer_c2_params, slicer_c2_tts, slicer_c2_slider_ids, slicer_c2_card = create_slicer_channel_card(2)
+
+phaser_c1_card = create_phaser_channel_card(1)
+phaser_c2_card = create_phaser_channel_card(2)
+
+flanger_c1_card = create_flanger_channel_card(1)
+flanger_c2_card = create_flanger_channel_card(2)
+
+tremolo_c1_card = create_tremolo_channel_card(1)
+tremolo_c2_card = create_tremolo_channel_card(2)
+
+overtone_c1_card = create_overtone_channel_card(1)
+overtone_c2_card = create_overtone_channel_card(2)
+
+channel_tooltips = list(zip(slicer_c1_tts, slicer_c2_tts))
+# Layout for the Slicer C1 and C2 channel cards.
+parameter_cards = dbc.Accordion([
+    dbc.AccordionItem([
+        dbc.Row([
+            dbc.Col([
+                dbc.Label(["Live Set Name:", make_tooltip("ls_name_tt")]),
+                dbc.Input(id="ls_name", value="My Live Set", type="text", valid=True)
+            ], width="auto"),
+            dbc.Col([
+                dbc.Label(["Patch Name:", make_tooltip("patch_name_tt")]),
+                dbc.Input(id="patch_name", value="CUSTOM-P1", type="text", valid=True)
+            ], width="auto"),
+            dbc.Col([
+                dbc.Label(["Format Rev:", make_tooltip("format_rev_tt")]),
+                dbc.Input(id="ls_formatrev", value="0001", type="text", disabled=True)
+            ], width="auto"),
+            dbc.Col([
+                dbc.Label(["Device:", make_tooltip("device_tt")]),
+                dbc.Input(id="ls_device", value="SL-2", type="text", disabled=True)
+            ], width="auto")
+        ])
+    ],title="Global Parameters",id="glbl_params"),
+    slicer_c1_card,
+    slicer_c2_card,
+    compressor_card,
+    phaser_c1_card,
+    phaser_c2_card,
+    flanger_c1_card,
+    flanger_c2_card,
+    tremolo_c1_card,
+    tremolo_c2_card,
+    overtone_c1_card,
+    overtone_c2_card,
+    mixer_card,
+    ns_card,
+    para_eq_card
+],always_open=True)
 
 # Layout for the body of the page.
 body = dbc.Container(children=
@@ -124,7 +120,7 @@ body = dbc.Container(children=
                      all_toasts +
                      [dbc.Row([
         dbc.Col([file_transfer_card], width=2),
-        dbc.Col([channel_cards], width=10)
+        dbc.Col([parameter_cards], width=10)
     ])],
     style={"padding-top": "10px"},
     fluid=True)
@@ -177,8 +173,8 @@ def handle_upload(contents):
     return glbl, p1, p2, show_err, show_success
 # Callback for uploading a .tsl file.
 glbl_outputs = [Output(lsp, "value") for lsp in ["ls_name", "patch_name", "ls_formatrev", "ls_device"]]
-c1_outputs = [Output(sl, "value") for sl in c1_params + c1_slider_ids]
-c2_outputs = [Output(sl, "value") for sl in c2_params + c2_slider_ids]
+c1_outputs = [Output(sl, "value") for sl in slicer_c1_params + slicer_c1_slider_ids]
+c2_outputs = [Output(sl, "value") for sl in slicer_c2_params + slicer_c2_slider_ids]
 app.callback([glbl_outputs,
               c1_outputs,
               c2_outputs,
@@ -207,8 +203,8 @@ def handle_download(_, glbl_p, c1_p, c2_p):
     return dict(content=out_json, filename="custom_patch.tsl")
 # Callback for downloading a .tsl file.
 glbl_state = [State(lsp, "value") for lsp in ["patch_name", "ls_name", "ls_formatrev", "ls_device"]]
-c1_state = [State(sl, "value") for sl in c1_params + c1_slider_ids]
-c2_state = [State(sl, "value") for sl in c2_params + c2_slider_ids]
+c1_state = [State(sl, "value") for sl in slicer_c1_params + slicer_c1_slider_ids]
+c2_state = [State(sl, "value") for sl in slicer_c2_params + slicer_c2_slider_ids]
 app.callback(Output("download", "data"),
              [Input("download_button", "n_clicks")],
              [glbl_state, c1_state, c2_state])(handle_download)
@@ -233,15 +229,15 @@ def disable_channels(enable, step_num, pattern, effect):
         pitch_flag = np.array([elem["id"].startswith("pitch_shift") for elem in dash.callback_context.outputs_list])
     else:
         pitch_flag = False
-    return (np.tile(step_num_flag, N_SLIDER_TYPES) | (not enable) | pitch_flag).tolist()
+    return (np.tile(step_num_flag, N_SLIDER_GROUPS) | (not enable) | pitch_flag).tolist()
 # Callback to disable the appropriate sliders depending on user's settings.
-app.callback([Output(c1_t, "disabled") for c1_t in c1_slider_ids],
+app.callback([Output(c1_t, "disabled") for c1_t in slicer_c1_slider_ids],
              [Input("c1_enable", "value"),
               Input("c1_step_num", "value"),
               Input("c1_pattern", "value"),
               Input("c1_effect", "value")])(disable_channels)
 
-app.callback([Output(c2_t, "disabled") for c2_t in c2_slider_ids],
+app.callback([Output(c2_t, "disabled") for c2_t in slicer_c2_slider_ids],
              [Input("c2_enable", "value"),
               Input("c2_step_num", "value"),
               Input("c2_pattern", "value"),
