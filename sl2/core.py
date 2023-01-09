@@ -26,6 +26,19 @@ class ParamSet(object):
         self._com = self._storage["PATCH%COM"].view(ComParamArray)
         self._slicer_1 = self._storage["PATCH%SLICER(1)"].view(SlicerParamArray)
         self._slicer_2 = self._storage["PATCH%SLICER(2)"].view(SlicerParamArray)
+        self._comp = self._storage["PATCH%COMP"]
+        self._phaser_1 = self._storage["PATCH%PHASER(1)"]
+        self._phaser_2 = self._storage["PATCH%PHASER(2)"]
+        self._flanger_1 = self._storage["PATCH%FLANGER(1)"]
+        self._flanger_2 = self._storage["PATCH%FLANGER(2)"]
+        self._tremolo_1 = self._storage["PATCH%TREMOLO(1)"]
+        self._tremolo_2 = self._storage["PATCH%TREMOLO(2)"]
+        self._overtone_1 = self._storage["PATCH%OVERTONE(1)"]
+        self._overtone_2 = self._storage["PATCH%OVERTONE(2)"]
+        self._mixer = self._storage["PATCH%MIXER"]
+        self._ns = self._storage["PATCH%NS"]
+        self._peq = self._storage["PATCH%PEQ"]
+        
 
     @staticmethod
     def _load_defaults():
@@ -56,6 +69,102 @@ class ParamSet(object):
     @slicer_2.setter
     def slicer_2(self,v):
         self._slicer_2[:] = v
+    
+    @property
+    def comp(self):
+        return self._comp
+    
+    @comp.setter
+    def comp(self,v):
+        self._comp[:] = v
+        
+    @property
+    def phaser_1(self):
+        return self._phaser_1
+    
+    @phaser_1.setter
+    def phaser_1(self,v):
+        self._phaser_1[:] = v
+
+    @property
+    def phaser_2(self):
+        return self._phaser_2
+
+    @phaser_2.setter
+    def phaser_2(self, v):
+        self._phaser_2[:] = v
+
+    @property
+    def flanger_1(self):
+        return self._flanger_1
+
+    @flanger_1.setter
+    def flanger_1(self, v):
+        self._flanger_1[:] = v
+
+    @property
+    def flanger_2(self):
+        return self._flanger_2
+
+    @flanger_2.setter
+    def flanger_2(self, v):
+        self._flanger_2[:] = v
+        
+    @property
+    def tremolo_1(self):
+        return self._tremolo_1
+
+    @tremolo_1.setter
+    def tremolo_1(self, v):
+        self._tremolo_1[:] = v
+
+    @property
+    def tremolo_2(self):
+        return self._tremolo_2
+
+    @tremolo_2.setter
+    def tremolo_2(self, v):
+        self._tremolo_2[:] = v
+        
+    @property
+    def overtone_1(self):
+        return self._overtone_1
+
+    @overtone_1.setter
+    def overtone_1(self, v):
+        self._overtone_1[:] = v
+
+    @property
+    def overtone_2(self):
+        return self._overtone_2
+
+    @overtone_2.setter
+    def overtone_2(self, v):
+        self._overtone_2[:] = v
+
+    @property
+    def mixer(self):
+        return self._mixer
+
+    @mixer.setter
+    def mixer(self,v):
+        self._mixer[:] = v
+
+    @property
+    def ns(self):
+        return self._ns
+
+    @ns.setter
+    def ns(self,v):
+        self._ns[:] = v
+
+    @property
+    def peq(self):
+        return self._peq
+
+    @peq.setter
+    def peq(self,v):
+        self._peq[:] = v
 
     def dict(self) -> dict:
         return {k:v.json() for k,v in self._storage.items()}

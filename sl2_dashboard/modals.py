@@ -56,8 +56,8 @@ live_set_modal = dbc.Modal([
     dbc.ModalBody([
         html.P("Sets the 'name' property of the .tsl file."),
         html.B("Note:"),
-        html.P(" Currently, importing a .tsl file into Tone Studio sets 'name' property to the filename, so"
-               " this field has no effect.")
+        html.P(" Currently, importing a .tsl file into Tone Studio sets 'name' property to the filename of the .tsl "
+               " file you are importing, so this field will be overwritten when importing into Tone Studio.")
     ])
 ], id="ls_name_tt_modal")
 
@@ -65,7 +65,7 @@ live_set_modal = dbc.Modal([
 patch_name_modal = dbc.Modal([
     dbc.ModalHeader(dbc.ModalTitle("Patch Name")),
     dbc.ModalBody([
-        html.P("Sets the name of a Patch, which is ASCII encoded as 'PATCH%COM' in the .tsl file."),
+        html.P("Sets the name for the patch, which is displayed in Tone Studio."),
         html.B("Note:"),
         html.P(" This name is only displayed in Tone Studio. The PATCH%COM array (and therefore the Patch Name value)"
                " is limited to 20 characters.")
@@ -76,7 +76,7 @@ patch_name_modal = dbc.Modal([
 format_rev_modal = dbc.Modal([
     dbc.ModalHeader(dbc.ModalTitle("Format Rev")),
     dbc.ModalBody([
-        html.I("UNSURE: Sets the 'formatRev' of the .tsl file (?). For now this value is "
+        html.P("Sets the 'formatRev' of the .tsl file (?). For now this value is "
                "only allowed to be '0001'.")
     ])
 ], id="format_rev_tt_modal")
@@ -98,7 +98,7 @@ pattern_modal = dbc.Modal([
         html.P("Sets the pattern preset for the patch."),
         html.P("This can be a number of preset values, or 'USER' to enable a custom slicer patch."),
         html.B("Note:"),
-        html.P("This value is locked to 'USER' since other values would disregard all custom parameters.")
+        html.P("This value is locked to 'USER' for now since other values ignore the values in the parameter arrays.")
     ])
 ], id="pattern_tt_modal")
 
@@ -116,9 +116,14 @@ enable_modal = dbc.Modal([
 effect_modal = dbc.Modal([
     dbc.ModalHeader(dbc.ModalTitle("Effect Type")),
     dbc.ModalBody([
-        html.P("Sets the type of effect used for the Effect Level array."),
+        html.P("Sets the type of effect used at each step."),
+        html.P("If the value is set to 'PITCH', per-step pitch control is available in the Pitch Shift parameter"
+               " array."),
+        html.P("(If the value is anything other than 'PITCH', the Pitch Shift sliders are disabled since they have no "
+               " effect in other modes.)"),
         html.B("Note:"),
-        html.P("This is disabled until we determine what each Effect Type should be named.")
+        html.P("The effect names may not be completely correct, and these effects may not sound good since their"
+               " configuration parameters are not available in the tool yet.")
     ])
 ], id="effect_tt_modal")
 
@@ -153,7 +158,10 @@ param_array_modal = dbc.Modal([
         html.P("Values are [0-100] and represent relative level at each step."),
         html.H5("Pitch Shift"),
         html.P("Sets the amount of pitch shifting applied to this step."),
-        html.P("Values are [0,24] where 0 is one octave below, and 24 is one octave above. Default is 12 (no shift).")
+        html.P("Values are [0,24] where 0 is one octave below, and 24 is one octave above. Default is 12 (no shift)."),
+        html.B("Note:"),
+        html.P("Choosing a value other than 'PITCH' for Effect Type will disable these sliders, since they have"
+               " no effect for other Effect Type modes.")
     ])
 ], id="param_arr_tt_modal")
 
