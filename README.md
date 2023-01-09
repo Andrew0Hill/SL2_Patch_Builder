@@ -1,14 +1,14 @@
-# SL2 Patch Builder
+# SL2 Pattern Editor
 This project provides the ability to create and edit patterns for the Boss SL-2 Slicer effect pedal. You can run the tool from your browser at http://sl2-patch-editor.xyz
 
 Using this tool, you can upload any of the existing SL-2 preset patterns, and modify their parameters. You can also create your own SL-2 patches from scratch, and load them onto your SL-2.
 
 Thanks to /u/CompetitionSuper7287 on reddit for figuring out all of the parameter array mappings for .tsl files!
 
-# How to use this tool
+## How to use this tool
 A web-hosted version of this dashboard is available using the link at the top of the README. You will also need to download BOSS Tone Studio for SL-2 in order to import or export pattern files from your SL-2.
 
-## Creating a pattern from scratch
+### Creating a pattern from scratch
 1. Navigate to http://sl2-patch-editor.xyz 
     - The tool contains a default set of parameters that will generate a (pretty boring) SL-2 pattern. 
 2. Change the parameters as desired, then click 'Download .tsl' to download your new pattern.
@@ -16,7 +16,7 @@ A web-hosted version of this dashboard is available using the link at the top of
 4. Drag the pattern you created to a slot on your SL-2.
 5. Done!
 
-## Modifying an existing pattern
+### Modifying an existing pattern
 1. From BOSS Tone Studio, create a new Liveset containing the patttern you'd like to modify. Export this pattern using Boss Tone Studio, the output filetype should be `.tsl`.
 2. Navigate to http://sl2-patch-editor.xyz in your browser and upload your .tsl file.
 3. Edit the parameters using the interface, then click the 'Download .tsl' button to download your created pattern.
@@ -25,7 +25,7 @@ A web-hosted version of this dashboard is available using the link at the top of
 5. Done! 
 
 
-## Running locally
+### Running locally
 To run the dashboard locally, clone this repository or download the .ZIP file. You will need Python 3 (Preferably Python 3.9 or 3.10) installed to run it.
 
 Once downloaded, run 
@@ -39,11 +39,11 @@ python3 main.py
 and navigate to the link presented in the console (likely `http://localhost:8050`)
 
 
-# What works
+## What works
 - Plotly Dash-based dashboard provides a web interface for reading and writing .tsl files. 
 - Basic library for reading, validating, and writing .tsl files using the `sl2` module
 
-# What's in progress (in order of most-to-least priority)
+## What's in progress (in order of most-to-least priority)
 - Implement the rest of the parameters (beyond just `PATCH%SLICER(1)` and `PATCH%SLICER(2)`):
   - Continue development of `sl2` to support validation for other parameters.
   - Update dashboard to enable modification of these parameters.
