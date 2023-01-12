@@ -24,7 +24,6 @@ A web-hosted version of this dashboard is available using the link at the top of
 4. Import the new `.tsl` file back into Tone Studio, and drag the pattern to a slot on your SL-2.
 5. Done! 
 
-
 ### Running locally
 To run the dashboard locally, clone this repository or download the .ZIP file. You will need Python 3 (Preferably Python 3.9 or 3.10) installed to run it.
 
@@ -38,7 +37,6 @@ python3 main.py
 ```
 and navigate to the link presented in the console (likely `http://localhost:8050`)
 
-
 ## What works
 - Plotly Dash-based dashboard provides a web interface for reading and writing .tsl files. 
 - Basic library for reading, validating, and writing .tsl files using the `sl2` module
@@ -51,3 +49,4 @@ and navigate to the link presented in the console (likely `http://localhost:8050
 - Generate documentation for `sl2` module.
 
 If you have any questions, issues, bugs or suggestions, please open a GitHub issue!
+
