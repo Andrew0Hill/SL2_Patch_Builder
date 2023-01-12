@@ -4,9 +4,7 @@ from importlib.resources import is_resource,read_text
 from typing import List
 from dataclasses import dataclass
 from typing import Optional
-from .params.slicer import SlicerParamArray
-from .params.com import ComParamArray
-from .utils import ParamArray
+from .params import *
 from .consts import *
 from . import defaults
 import copy
@@ -20,25 +18,26 @@ class ParamSet(object):
         self._storage = ParamSet._load_defaults()
         # Make everything a generic ParamArray for now, we will create more specific views using subclasses
         # of ParamArray below.
-        np_kwargs = {k:ParamArray(v) for k,v in kwargs.items()}
+        np_kwargs = {k:np.array(v) for k,v in kwargs.items()}
         self._storage.update(np_kwargs)
         # Get views of specific values we are interested in.
         self._com = self._storage["PATCH%COM"].view(ComParamArray)
         self._slicer_1 = self._storage["PATCH%SLICER(1)"].view(SlicerParamArray)
         self._slicer_2 = self._storage["PATCH%SLICER(2)"].view(SlicerParamArray)
-        self._comp = self._storage["PATCH%COMP"]
-        self._phaser_1 = self._storage["PATCH%PHASER(1)"]
-        self._phaser_2 = self._storage["PATCH%PHASER(2)"]
-        self._flanger_1 = self._storage["PATCH%FLANGER(1)"]
-        self._flanger_2 = self._storage["PATCH%FLANGER(2)"]
-        self._tremolo_1 = self._storage["PATCH%TREMOLO(1)"]
-        self._tremolo_2 = self._storage["PATCH%TREMOLO(2)"]
-        self._overtone_1 = self._storage["PATCH%OVERTONE(1)"]
-        self._overtone_2 = self._storage["PATCH%OVERTONE(2)"]
-        self._mixer = self._storage["PATCH%MIXER"]
-        self._ns = self._storage["PATCH%NS"]
-        self._peq = self._storage["PATCH%PEQ"]
-        
+        self._comp = self._storage["PATCH%COMP"].view(CompParamArray)
+        self._divider = self._storage["PATCH%DIVIDER"].view(DividerParamArray)
+        self._phaser_1 = self._storage["PATCH%PHASER(1)"].view(PhaserParamArray)
+        self._phaser_2 = self._storage["PATCH%PHASER(2)"].view(PhaserParamArray)
+        self._flanger_1 = self._storage["PATCH%FLANGER(1)"].view(FlangerParamArray)
+        self._flanger_2 = self._storage["PATCH%FLANGER(2)"].view(FlangerParamArray)
+        self._tremolo_1 = self._storage["PATCH%TREMOLO(1)"].view(TremoloParamArray)
+        self._tremolo_2 = self._storage["PATCH%TREMOLO(2)"].view(TremoloParamArray)
+        self._overtone_1 = self._storage["PATCH%OVERTONE(1)"].view(OvertoneParamArray)
+        self._overtone_2 = self._storage["PATCH%OVERTONE(2)"].view(OvertoneParamArray)
+        self._mixer = self._storage["PATCH%MIXER"].view(MixerParamArray)
+        self._ns = self._storage["PATCH%NS"].view(NSParamArray)
+        self._peq = self._storage["PATCH%PEQ"].view(ParaEQParamArray)
+        self._beat = self._storage["PATCH%BEAT"].view(BeatParamArray)
 
     @staticmethod
     def _load_defaults():
@@ -77,7 +76,15 @@ class ParamSet(object):
     @comp.setter
     def comp(self,v):
         self._comp[:] = v
-        
+
+    @property
+    def divider(self):
+        return self._divider
+
+    @divider.setter
+    def divider(self,v):
+        self._divider[:] = v
+
     @property
     def phaser_1(self):
         return self._phaser_1
@@ -165,6 +172,14 @@ class ParamSet(object):
     @peq.setter
     def peq(self,v):
         self._peq[:] = v
+
+    @property
+    def beat(self):
+        return self._beat
+
+    @beat.setter
+    def beat(self,v):
+        self._beat[:] = v
 
     def dict(self) -> dict:
         return {k:v.json() for k,v in self._storage.items()}
