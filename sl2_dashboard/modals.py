@@ -35,13 +35,17 @@ all_toasts = [err_toast,success_toast]
 disclaimer_modal = dbc.Modal([
     dbc.ModalHeader(dbc.ModalTitle("About This Tool")),
     dbc.ModalBody([
-        html.P("This tool can be used to edit the .tsl files exported from Tone Studio for the SL-2 Slicer."),
-        html.P("The tool is currently under development, so not all parameters defined in .tsl files are"
-               " available yet, but I will try to add support for as many as possible in the future.\n"),
-        html.P("If you find any issues or bugs with the tool (or just have a suggestion), please open an "
-               "issue on GitHub using the link in the header.\n"),
-        html.P("Thanks for trying out the tool, and happy slicing!\n"),
-        html.P("-Andrew")
+        html.P("This tool can be used to create and edit the .tsl patch files exported for the"
+               " SL-2 Slicer effect pedal."),
+        html.P("The tool is currently under development, so many parameters (including most of the non-slicer effect"
+               " parameters) do not have meaningful names yet as we are unsure of their function."),
+        html.P("You can click on the help tooltips next to each parameter to view the information (if any) we currently"
+               " have about that parameter."),
+        html.P("As we learn more about the functions of the unlabeled parameters, we will update the names, tooltip"
+               " descriptions, and permissible value ranges."),
+        html.P("If you encounter issues with the tool, have information about one of the parameters,"
+               " or just have a suggestion, please open an issue on GitHub using the link in the header."),
+        html.P("Thanks for trying out the tool, and happy slicing!")
     ]),
     dbc.ModalFooter(
             html.P("This tool is licensed under the MIT license, and provided as-is without any warranty. This tool"
