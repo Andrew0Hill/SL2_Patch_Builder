@@ -1,6 +1,6 @@
 import numpy as np
 from enum import IntEnum
-from ..utils import ParamArray
+from ..params import ParamArray
 from .. import defaults
 from typing import Optional,List,Union
 from functools import cached_property

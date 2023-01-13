@@ -35,13 +35,17 @@ all_toasts = [err_toast,success_toast]
 disclaimer_modal = dbc.Modal([
     dbc.ModalHeader(dbc.ModalTitle("About This Tool")),
     dbc.ModalBody([
-        html.P("This tool can be used to edit the .tsl files exported from Tone Studio for the SL-2 Slicer."),
-        html.P("The tool is currently under development, so not all parameters defined in .tsl files are"
-               " available yet, but I will try to add support for as many as possible in the future.\n"),
-        html.P("If you find any issues or bugs with the tool (or just have a suggestion), please open an "
-               "issue on GitHub using the link in the header.\n"),
-        html.P("Thanks for trying out the tool, and happy slicing!\n"),
-        html.P("-Andrew")
+        html.P("This tool can be used to create and edit the .tsl patch files exported for the"
+               " SL-2 Slicer effect pedal."),
+        html.P("The tool is currently under development, so many parameters (including most of the non-slicer effect"
+               " parameters) do not have meaningful names yet as we are unsure of their function."),
+        html.P("You can click on the help tooltips next to each parameter to view the information (if any) we currently"
+               " have about that parameter."),
+        html.P("As we learn more about the functions of the unlabeled parameters, we will update the names, tooltip"
+               " descriptions, and permissible value ranges."),
+        html.P("If you encounter issues with the tool, have information about one of the parameters,"
+               " or just have a suggestion, please open an issue on GitHub using the link in the header."),
+        html.P("Thanks for trying out the tool, and happy slicing!")
     ]),
     dbc.ModalFooter(
             html.P("This tool is licensed under the MIT license, and provided as-is without any warranty. This tool"
@@ -100,7 +104,7 @@ pattern_modal = dbc.Modal([
         html.B("Note:"),
         html.P("This value is locked to 'USER' for now since other values ignore the values in the parameter arrays.")
     ])
-], id="pattern_tt_modal")
+], id="slicer_pattern_tt_modal")
 
 # Enable modal
 enable_modal = dbc.Modal([
@@ -110,7 +114,7 @@ enable_modal = dbc.Modal([
         html.B("Note:"),
         html.P("Disabling the channel will also disable the sliders for all parameter arrays in the channel.")
     ])
-], id="enable_tt_modal")
+], id="slicer_enable_tt_modal")
 
 # Effect Type Modal
 effect_modal = dbc.Modal([
@@ -125,7 +129,7 @@ effect_modal = dbc.Modal([
         html.P("The effect names may not be completely correct, and these effects may not sound good since their"
                " configuration parameters are not available in the tool yet.")
     ])
-], id="effect_tt_modal")
+], id="slicer_effect_tt_modal")
 
 # Step Number Modal
 step_number_modal = dbc.Modal([
@@ -136,7 +140,7 @@ step_number_modal = dbc.Modal([
         html.B("Note:"),
         html.P("Choosing a value < STEP_24 will disable some sliders to indicate that these values will be ignored.")
     ])
-], id="step_num_tt_modal")
+], id="slicer_step_num_tt_modal")
 
 # Parameter Arrays Modal
 param_array_modal = dbc.Modal([
@@ -163,7 +167,7 @@ param_array_modal = dbc.Modal([
         html.P("Choosing a value other than 'PITCH' for Effect Type will disable these sliders, since they have"
                " no effect for other Effect Type modes.")
     ])
-], id="param_arr_tt_modal")
+], id="slicer_param_arr_tt_modal")
 
 all_modals = [disclaimer_modal,
               live_set_modal,
