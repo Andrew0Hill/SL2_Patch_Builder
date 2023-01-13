@@ -1,6 +1,6 @@
 import dash_bootstrap_components as dbc
 from dash import html, dcc, Output, State
-from sl2_dashboard.cards.common import make_tooltip, SLIDER_ARGS
+from .common import make_tooltip, SLIDER_ARGS
 
 
 def create_tremolo_channel_card(cnum: int):

@@ -2,7 +2,7 @@ import dash_bootstrap_components as dbc
 from sl2.params import slicer
 from itertools import chain
 from dash import dcc, Output, State
-from sl2_dashboard.cards.common import make_tooltip, opts_from_enum, SLIDER_ARGS, SLIDER_TYPES, N_CHANNELS
+from .common import make_tooltip, opts_from_enum, SLIDER_ARGS, SLIDER_TYPES, N_CHANNELS
 
 
 def make_slider_group(id, cargs):

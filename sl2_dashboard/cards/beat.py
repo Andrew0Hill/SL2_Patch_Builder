@@ -1,5 +1,5 @@
 import dash_bootstrap_components as dbc
-from sl2_dashboard.cards.common import make_tooltip, opts_from_enum, SLIDER_ARGS, SLIDER_TYPES, N_CHANNELS
+from .common import make_tooltip, opts_from_enum, SLIDER_ARGS, SLIDER_TYPES, N_CHANNELS
 from dash import html, dcc, Output, State
 
 beat_params = {"Param 1": "beat_param_1",
