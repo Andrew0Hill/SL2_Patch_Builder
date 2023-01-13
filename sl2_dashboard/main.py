@@ -24,9 +24,9 @@ from cards.para_eq import para_eq_card, para_eq_outputs, para_eq_state
 from cards.phaser import create_phaser_channel_card
 from cards.slicer import create_slicer_channel_card
 from cards.tremolo import create_tremolo_channel_card
+from cards.common import N_SLIDER_GROUPS, N_CHANNELS
 from modals import all_modals, all_toasts
 from sl2.params import slicer
-from sl2_dashboard.cards.common import N_SLIDER_GROUPS, N_CHANNELS
 
 # Helper function to make a hover-able tooltip
 glbl_tooltips = []
