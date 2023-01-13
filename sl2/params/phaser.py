@@ -1,4 +1,4 @@
-from ..utils import ParamArray
+from .array import ParamArray
 
 
 class PhaserParamArray(ParamArray):
@@ -26,7 +26,7 @@ class PhaserParamArray(ParamArray):
         return self[self._phaser_type]
 
     @phaser_type.setter
-    def param_1(self, v):
+    def phaser_type(self, v):
         self[self._phaser_type] = v
 
     @property

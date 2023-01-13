@@ -100,7 +100,7 @@ pattern_modal = dbc.Modal([
         html.B("Note:"),
         html.P("This value is locked to 'USER' for now since other values ignore the values in the parameter arrays.")
     ])
-], id="pattern_tt_modal")
+], id="slicer_pattern_tt_modal")
 
 # Enable modal
 enable_modal = dbc.Modal([
@@ -110,7 +110,7 @@ enable_modal = dbc.Modal([
         html.B("Note:"),
         html.P("Disabling the channel will also disable the sliders for all parameter arrays in the channel.")
     ])
-], id="enable_tt_modal")
+], id="slicer_enable_tt_modal")
 
 # Effect Type Modal
 effect_modal = dbc.Modal([
@@ -125,7 +125,7 @@ effect_modal = dbc.Modal([
         html.P("The effect names may not be completely correct, and these effects may not sound good since their"
                " configuration parameters are not available in the tool yet.")
     ])
-], id="effect_tt_modal")
+], id="slicer_effect_tt_modal")
 
 # Step Number Modal
 step_number_modal = dbc.Modal([
@@ -136,7 +136,7 @@ step_number_modal = dbc.Modal([
         html.B("Note:"),
         html.P("Choosing a value < STEP_24 will disable some sliders to indicate that these values will be ignored.")
     ])
-], id="step_num_tt_modal")
+], id="slicer_step_num_tt_modal")
 
 # Parameter Arrays Modal
 param_array_modal = dbc.Modal([
@@ -163,7 +163,7 @@ param_array_modal = dbc.Modal([
         html.P("Choosing a value other than 'PITCH' for Effect Type will disable these sliders, since they have"
                " no effect for other Effect Type modes.")
     ])
-], id="param_arr_tt_modal")
+], id="slicer_param_arr_tt_modal")
 
 all_modals = [disclaimer_modal,
               live_set_modal,

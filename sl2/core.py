@@ -18,7 +18,7 @@ class ParamSet(object):
         self._storage = ParamSet._load_defaults()
         # Make everything a generic ParamArray for now, we will create more specific views using subclasses
         # of ParamArray below.
-        np_kwargs = {k:np.array(v) for k,v in kwargs.items()}
+        np_kwargs = {k:ParamArray(v) for k,v in kwargs.items()}
         self._storage.update(np_kwargs)
         # Get views of specific values we are interested in.
         self._com = self._storage["PATCH%COM"].view(ComParamArray)

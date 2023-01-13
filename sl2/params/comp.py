@@ -1,4 +1,4 @@
-from ..utils import ParamArray
+from .array import ParamArray
 
 class CompParamArray(ParamArray):
 
