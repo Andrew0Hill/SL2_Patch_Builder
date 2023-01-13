@@ -1,6 +1,6 @@
 import dash_bootstrap_components as dbc
 from dash import html, dcc, Output, State
-from sl2_dashboard.cards.common import make_tooltip, opts_from_enum, SLIDER_ARGS, SLIDER_TYPES, N_CHANNELS
+from .common import make_tooltip, opts_from_enum, SLIDER_ARGS, SLIDER_TYPES, N_CHANNELS
 from sl2.params import divider
 
 divider_params = {f"Param {i}" : f"divider_param_{i}" for i in range(1,3)}
