@@ -3,7 +3,7 @@ import numpy as np
 from importlib.resources import is_resource,read_text
 from typing import List
 from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, Union
 from .params import *
 from .consts import *
 from . import defaults
@@ -193,8 +193,14 @@ class Memo:
         return self.__dict__
 
 class Patch:
-    def __init__(self, paramSet: ParamSet, memo: Optional[Memo] = None):
-        self.memo: Memo = memo if memo is not None else Memo()
+    def __init__(self, paramSet: ParamSet, memo: Optional[Union[Memo, str]] = None):
+        if memo is None:
+            self.memo = Memo()
+        elif type(memo) is str:
+            self.memo = Memo(memo)
+        else:
+            self.memo = Memo()
+
         self.paramSet: ParamSet = paramSet
 
     def dict(self):

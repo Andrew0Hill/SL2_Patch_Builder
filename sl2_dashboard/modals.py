@@ -102,7 +102,8 @@ pattern_modal = dbc.Modal([
         html.P("Sets the pattern preset for the patch."),
         html.P("This can be a number of preset values, or 'USER' to enable a custom slicer patch."),
         html.B("Note:"),
-        html.P("This value is locked to 'USER' for now since other values ignore the values in the parameter arrays.")
+        html.P("Any value other than 'USER' will disable all sliders, since the preset pattern will override any"
+               " pattern defined using the sliders.")
     ])
 ], id="slicer_pattern_tt_modal")
 
@@ -126,8 +127,7 @@ effect_modal = dbc.Modal([
         html.P("(If the value is anything other than 'PITCH', the Pitch Shift sliders are disabled since they have no "
                " effect in other modes.)"),
         html.B("Note:"),
-        html.P("The effect names may not be completely correct, and these effects may not sound good since their"
-               " configuration parameters are not available in the tool yet.")
+        html.P("The effect names may not be completely correct yet.")
     ])
 ], id="slicer_effect_tt_modal")
 
