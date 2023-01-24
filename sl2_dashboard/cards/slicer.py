@@ -37,7 +37,7 @@ def create_slicer_channel_card(cnum: int):
                     dbc.Select(id=p_names["Pattern"],
                                options=opts_from_enum(slicer.PATTERN),
                                value=str(slicer.PATTERN.USER.value),
-                               disabled=True)
+                               disabled=False)
 
                 ], width="auto"),
                 dbc.Col([

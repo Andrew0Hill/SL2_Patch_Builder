@@ -214,7 +214,9 @@ def handle_upload(contents):
         glbl = [live_set.name, params.com.string, live_set.formatRev, live_set.device]
 
         show_success = True
-    except:
+    except Exception as e:
+        print(e)
+        raise(e)
         show_err = True
     return glbl, \
            sl_1, sl_2, \
@@ -318,7 +320,8 @@ def disable_channels(enable, step_num, pattern, effect):
             step_num_flag = np.array([False] * d_val + [True] * (N_CHANNELS - d_val))
             break
     # Pattern flag works just like enable
-    # pattern = int(pattern)
+    pattern = int(pattern)
+    pattern_flag = pattern != 50
     # Check if effect is set to anything other than pitch.
     effect = int(effect)
     # If so, we need to disable all pitch_shift sliders.
@@ -326,7 +329,7 @@ def disable_channels(enable, step_num, pattern, effect):
         pitch_flag = np.array([elem["id"].startswith("pitch_shift") for elem in dash.callback_context.outputs_list])
     else:
         pitch_flag = False
-    return (np.tile(step_num_flag, N_SLIDER_GROUPS) | (not enable) | pitch_flag).tolist()
+    return (np.tile(step_num_flag, N_SLIDER_GROUPS) | (not enable) | pitch_flag | pattern_flag).tolist()
 # Callback to disable the appropriate sliders depending on user's settings.
 app.callback([Output(c1_t, "disabled") for c1_t in slicer_c1_slider_ids],
              [Input("slicer_c1_enable", "value"),

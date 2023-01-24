@@ -1,3 +1,5 @@
+import enum
+
 import numpy as np
 from enum import IntEnum
 from ..params import ParamArray
@@ -6,8 +8,9 @@ from typing import Optional,List,Union
 from functools import cached_property
 import importlib.resources as pkg_resources
 
-class PATTERN(IntEnum):
-    USER = 50
+# Dynamically create this enum so we don't have 50 lines of
+# PATTERN_n = n....
+PATTERN = enum.IntEnum("PATTERN", {f"PATTERN_{i}":i for i in range(50)} | {"USER": 50})
 
 class FX_TYPE(IntEnum):
     OFF = 0
