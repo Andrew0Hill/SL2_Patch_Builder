@@ -17,7 +17,7 @@ from cards.compressor import compressor_card, compressor_outputs, compressor_sta
 from cards.divider import divider_card, divider_outputs, divider_state
 from cards.file_transfer import file_transfer_card
 from cards.flanger import create_flanger_channel_card
-from cards.mixer import mixer_card, mixer_outputs, mixer_state
+from cards.mixer import mixer_card, mixer_outputs, mixer_state, mixer_tts
 from cards.noise_supressor import noise_suppressor_card, noise_suppressor_outputs, noise_suppressor_state
 from cards.overtone import create_overtone_channel_card
 from cards.para_eq import para_eq_card, para_eq_outputs, para_eq_state
@@ -30,6 +30,7 @@ from sl2.params import slicer
 
 # Helper function to make a hover-able tooltip
 glbl_tooltips = []
+glbl_tooltips.extend(mixer_tts.values())
 def make_tooltip(id):
     tt = html.A(id=id,
                 className="bi bi-question-circle",
@@ -214,9 +215,7 @@ def handle_upload(contents):
         glbl = [live_set.name, params.com.string, live_set.formatRev, live_set.device]
 
         show_success = True
-    except Exception as e:
-        print(e)
-        raise(e)
+    except:
         show_err = True
     return glbl, \
            sl_1, sl_2, \

@@ -169,6 +169,17 @@ param_array_modal = dbc.Modal([
     ])
 ], id="slicer_param_arr_tt_modal")
 
+# Mixer Channel 2 Bypass Modal
+mixer_bypass_modal = dbc.Modal([
+    dbc.ModalHeader(dbc.ModalTitle("Mixer Channel 2 Bypass")),
+    dbc.ModalBody([
+        html.P("If enabled, this switch seems to bypass Slicer Channel 2. If you want to run two slicer patterns"
+               " simultaneously, you will need to ensure that this switch is disabled."),
+        html.P("It is unknown whether this switch also bypass the effects (Phaser, Tremolo, etc) for Channel 2"
+               " as well.")
+    ])
+], id="mixer_ch2_bypass_tt_modal")
+
 all_modals = [disclaimer_modal,
               live_set_modal,
               patch_name_modal,
@@ -178,4 +189,5 @@ all_modals = [disclaimer_modal,
               enable_modal,
               effect_modal,
               step_number_modal,
-              param_array_modal]
+              param_array_modal,
+              mixer_bypass_modal]
