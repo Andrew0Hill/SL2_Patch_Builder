@@ -6,7 +6,7 @@ from .common import make_tooltip, opts_from_enum, SLIDER_ARGS, SLIDER_TYPES, N_C
 
 
 def make_slider_group(id, cargs):
-    return [dbc.Col(dcc.Slider(id=f"{id}_s{i}", disabled=(i >= 8), **cargs, **SLIDER_ARGS), style={"width": "0px"}) for
+    return [dbc.Col(dcc.Slider(id=f"{id}_s{i}", disabled=(i >= 8) or id.startswith("pitch_shift"), **cargs, **SLIDER_ARGS), style={"width": "0px"}) for
             i in range(N_CHANNELS)]
 
 
