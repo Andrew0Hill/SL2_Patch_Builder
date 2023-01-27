@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "anyOf": [
+    {
+      "type": "string"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "memo": {
+          "type": "string"
+        },
+        "isToneCentralPatch": {
+          "type": "boolean"
+        }
+      }
+    }
+  ]
+}

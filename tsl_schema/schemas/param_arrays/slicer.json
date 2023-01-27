@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "array",
+  "minLength": 124,
+  "maxLength": 124,
+  "items": {
+    "$ref": "hex_byte.json"
+  }
+}

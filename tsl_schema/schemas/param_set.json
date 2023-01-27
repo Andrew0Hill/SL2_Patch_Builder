@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "PATCH%COM": {"$ref": "param_arrays/com.json"},
+    "PATCH%SLICER(1)": {"$ref": "param_arrays/slicer.json"},
+    "PATCH$SLICER(2)": {"$ref": "param_arrays/slicer.json"}
+  },
+  "required": [
+    "PATCH%COM"
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "formatRev": {
+      "const": "0001"
+    },
+    "device": {
+      "enum": ["SL-2"]
+    },
+    "data": {
+      "type": "array",
+      "prefixItems": [
+        {
+          "type": "array",
+          "items": {
+            "$ref": "patch.json"
+          }
+        }
+      ]
+    }
+  },
+  "required": ["name","formatRev","device","data"]
+}
